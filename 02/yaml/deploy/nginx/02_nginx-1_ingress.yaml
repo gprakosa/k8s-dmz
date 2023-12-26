@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-1 
+  namespace: default
+spec:
+  ingressClassName: nginx-dmz
+  rules:
+  - host: dmz.localdev.me
+    http:
+      paths:
+      - backend:
+          service:
+            name: nginx-1
+            port:
+              number: 80
+        path: /
+        pathType: Prefix

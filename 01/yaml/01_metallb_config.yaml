@@ -1,0 +1,43 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: pool-dmz
+  namespace: metallb-system
+spec:
+  addresses:
+  - 10.81.57.200-10.81.57.210
+  serviceAllocation:
+    serviceSelectors:
+    - matchExpressions:
+      - {key: zone, operator: In, values: [dmz]}
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: dmz
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - pool-dmz
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: pool-serverfarm
+  namespace: metallb-system
+spec:
+  addresses:
+  - 10.81.56.200-10.81.56.210
+  serviceAllocation:
+    serviceSelectors:
+    - matchExpressions:
+      - {key: zone, operator: In, values: [serverfarm]}
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: serverfarm
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - pool-serverfarm
