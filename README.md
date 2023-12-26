@@ -48,26 +48,26 @@ These activities are consider as common things that might includes:
 
 > Enable IP Forward
 ```bash
-# echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
-# sysctl -p
-# sysctl net.ipv4.ip_forward
+echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+sysctl -p
+sysctl net.ipv4.ip_forward
 ```
 
 > Iptables
 ```bash
-# iptables -A FORWARD -j ACCEPT
-# iptables -t nat -s 10.81.56.0/24 -A POSTROUTING -j MASQUERADE
-# iptables -t nat -s 10.81.57.0/24 -A POSTROUTING -j MASQUERADE
-# apt-get install iptables-persistent
-# iptables-save > /etc/iptables/rules.v4
+iptables -A FORWARD -j ACCEPT
+iptables -t nat -s 10.81.56.0/24 -A POSTROUTING -j MASQUERADE
+iptables -t nat -s 10.81.57.0/24 -A POSTROUTING -j MASQUERADE
+apt-get install iptables-persistent
+iptables-save > /etc/iptables/rules.v4
 ```
 
 #### Windows PC
 
 > Static Route
 ```bash
-> arp -a
-> route add 10.81.0.0 mask 255.255.0.0 <router-eth2-ipaddress-got-from-arp-a>
+arp -a
+route add 10.81.0.0 mask 255.255.0.0 <router-eth2-ipaddress-got-from-arp-a>
 ```
 
 ## 3. Cluster Configuration
@@ -87,25 +87,25 @@ k apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/man
 Once installation completed, lets configure it so any service with `LoadBalancer` type created will be assigned with our pre-configured Layer2 IP addresses pool depend on label/selector we set, in our case is whether server farm or dmz.
 
 ```bash
-# k apply -f 01/yaml/01_metallb_config.yaml
+k apply -f 01/yaml/01_metallb_config.yaml
 ```
 
 Lets test it by create some nginx web server deployment:
 
 ```bash
-# k apply -f 01/yaml/deploy/nginx/
+k apply -f 01/yaml/deploy/nginx/
 ```
 
 Verify the **EXTERNAL-IP** using:
 
 ```bash
-# k get svc
+k get svc
 ```
 
 You might notice that `nginx-1, nginx-3, and nginx-5` are in DMZ network, while `nginx-2 and nginx-4` are in Server Farm network. Verify them all using curl command or a browser directly from PC to the all EXTERNAL-IPs. Great! Lets cleanup: 
 
 ```bash
-# kdf -f 01/yaml/deploy/nginx/
+kdf -f 01/yaml/deploy/nginx/
 ```
 
 > alias kdf='kubectl delete --force --grace-period 0'
@@ -117,7 +117,7 @@ You might notice that `nginx-1, nginx-3, and nginx-5` are in DMZ network, while 
 So, instead of using LoadBalancer for all of our services which can cause our IP addresss pool exhausted, we'll use Ingress to expose our services. We need [Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start) to be installed: 
 
 ```bash
-# k apply -f 02/yaml/02_ingress_controller-1_deploy.yaml
+k apply -f 02/yaml/02_ingress_controller-1_deploy.yaml
 ```
 
 Actually the service type of the controller itself is also set to LoadBalancer, so we need to set the label match with our MetalLB setup. But that's it, we only need to load-balance the ingress controller! 
@@ -125,18 +125,18 @@ Actually the service type of the controller itself is also set to LoadBalancer, 
 Make sure the controller pod is up and running:
 
 ```bash
-# k -n ingress-nginx get po
+k -n ingress-nginx get po
 ```
 
 Lets test it by create a httpd web server deployment that will reside on Server Farm network. This is done by set the `ingressClassName` match to the controller on the ingress:
 
 ```bash
-# k apply -f 02/yaml/deploy/httpd/
+k apply -f 02/yaml/deploy/httpd/
 ```
 
 Verify the **ADDRESS** using:
 ```bash
-# k get ingress -w
+k get ingress -w
 ```
 
 > Plase note that it might require several time for the ADDRESS to be available!
@@ -146,24 +146,24 @@ Verify the **ADDRESS** using:
 To make DMZ also available via ingress (on the different network for sure), lets create another ingress controller:
 
 ```bash
-# k apply -f 02/yaml/02_ingress_controller-2_deploy.yaml
+k apply -f 02/yaml/02_ingress_controller-2_deploy.yaml
 ```
 
 Make sure the controller pod is up and running:
 
 ```bash
-# k -n ingress-nginx get po
+k -n ingress-nginx get po
 ```
 
 Lets test it by create some nginx web server deployment:
 
 ```bash
-# k apply -f 02/yaml/deploy/nginx
+k apply -f 02/yaml/deploy/nginx
 ```
 
 Verify the **ADDRESS** again using:
 ```bash
-# k get ingress -w
+k get ingress -w
 ```
 
 Once all ingresses ADDRESS are available lets then create DNS records for them. You might just create it on the master node at `/etc/hosts` or if you want to use browser you also need to create it on the PC at `C:\Windows\System32\drivers\etc\hosts`:
@@ -177,8 +177,8 @@ Once all ingresses ADDRESS are available lets then create DNS records for them. 
 Great! Lets cleanup:
 
 ```bash
-# kdf -R -f .
-# kdf -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
+kdf -R -f .
+kdf -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
 ```
 
 > Plase note that `ingress-nginx` namespace might require several time be complete terminated!
