@@ -139,7 +139,7 @@ Verify the **ADDRESS** using:
 k get ingress -w
 ```
 
-> Plase note that it might require several time for the ADDRESS to be available!
+> :hourglass_flowing_sand: Plase note that it might require several time for the ADDRESS to be available! 
 
 #### Create the second Ingress Controller
 
@@ -166,7 +166,7 @@ Verify the **ADDRESS** again using:
 k get ingress -w
 ```
 
-> Plase note that it might require several time for the ADDRESS to be available!
+> :hourglass_flowing_sand: Plase note that it might require several time for the ADDRESS to be available!
 
 Once all ingresses ADDRESS are available lets then create DNS records for them. You might just create it on the master node at `/etc/hosts` or if you want to use browser you also need to create it on the PC at `C:\Windows\System32\drivers\etc\hosts`:
 
@@ -183,4 +183,4 @@ kdf -R -f .
 kdf -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
 ```
 
-> Plase note that `ingress-nginx` namespace might require several time to be fully complete terminated!
+> :hourglass_flowing_sand: Plase note that `ingress-nginx` namespace might require several time to be fully complete terminated!
