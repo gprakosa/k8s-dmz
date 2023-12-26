@@ -65,16 +65,16 @@ These activities are consider as common things that might includes:
 #### Windows PC
 
 > Static Route
-```ps
+```bash
 > arp -a
-> route add 10.81.0.0 mask 255.255.0.0 <Router-VM DHCP IP address got from arp -a>
+> route add 10.81.0.0 mask 255.255.0.0 <router-eth2-ipaddress-got-from-arp-a>
 ```
 
 ## 3. Cluster Configuration
 
 ### Initialize the Cluster
 
-You can use anything, but I prefer [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/i) as per Kubernetes official toolbox.
+You can use anything, but I prefer [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/) as per Kubernetes official toolbox.
 
 ### LoadBalancing the Bare-Metal
 
