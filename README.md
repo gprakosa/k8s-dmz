@@ -168,7 +168,7 @@ k get ingress -w
 
 > :hourglass_flowing_sand: Plase note that it might require several time for the ADDRESS to be available!
 
-Once all ingresses ADDRESS are available lets then create DNS records for them. You might just create it on the master node at `/etc/hosts` or if you want to use browser you also need to create it on the PC at `C:\Windows\System32\drivers\etc\hosts`:
+Once all ingresses ADDRESS are available lets then create DNS records for them. You might just create it on the master node at `/etc/hosts` then curl it, or if you want to use browser you also need to create it on the PC at `C:\Windows\System32\drivers\etc\hosts`:
 
 ```bash
 10.81.56.200 demo.localdev.me
